@@ -20,9 +20,8 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className} hero-gradient`}>
+        <body className={`${inter.className}`}>
           {/* header */}
-          <Header />
           <main className="min-h-screen">{children}</main>
           <Toaster richColors />
           {/* footer */}

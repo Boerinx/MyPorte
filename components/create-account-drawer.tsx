@@ -26,13 +26,9 @@ import { createAccount } from "@/actions/dashboard";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-type props = {
-  children: React.ReactNode;
-};
-
 type AccountType = "CURRENT" | "SAVINGS";
 
-const CreateAccountDrawer = ({ children }: props) => {
+const CreateAccountDrawer = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = useState(false);
 
   const {

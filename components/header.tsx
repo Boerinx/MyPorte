@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { checkUser } from "@/lib/checkUser";
+import { checkUser } from "@/lib/check-user";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { LayoutDashboard, PenBox } from "lucide-react";
 import { Button } from "./ui/button";
@@ -10,7 +10,7 @@ const Header = async () => {
 
   return (
     <header className="sticky top-0 z-50 w-full">
-      <div className="mx-auto max-w-7xl flex justify-between items-center px-6 py-3 bg-white/30 rounded-xl">
+      <div className="mx-auto max-w-7xl flex justify-between items-center px-6 py-3 bg-white/80 rounded-xl">
         <div className="flex items-center gap-2">
           <Link href="/">
             <Image

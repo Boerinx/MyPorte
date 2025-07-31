@@ -4,6 +4,7 @@ import serializeTransaction from "@/lib/serialize-transaction";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getCurrentUser } from "@/lib/get-current-user";
 
 export async function updateDefaultAccount(accountId: string) {
   try {
@@ -76,6 +77,54 @@ export async function getAccountWithTransactions(accountId: string) {
       ...serializeTransaction(account),
       transactions: account.transactions.map(serializeTransaction),
     };
+  } catch (error) {
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+export async function bulkDeleteTransactions(transactionIds: string[]) {
+  try {
+    const user = await getCurrentUser();
+
+    const transactions = await db.transaction.findMany({
+      where: {
+        id: { in: transactionIds },
+        userId: user.id,
+      },
+    });
+
+    const accountBalanceChanges = transactions.reduce<Record<string, number>>(
+      (acc, transaction) => {
+        const amount = transaction.amount.toNumber();
+        const change = transaction.type === "EXPENSE" ? amount : -amount;
+
+        acc[transaction.accountId] = (acc[transaction.accountId] || 0) + change;
+        return acc;
+      },
+      {}
+    );
+
+    // Delete transactions and update account balances in a transaction
+    await db.$transaction(async (tx) => {
+      // Delete transactions
+      await tx.transaction.deleteMany({
+        where: { id: { in: transactionIds }, userId: user.id },
+      });
+
+      for (const [accountId, balanceChange] of Object.entries(
+        accountBalanceChanges
+      )) {
+        await tx.account.update({
+          where: { id: accountId, userId: user.id },
+          data: { balance: { increment: balanceChange } },
+        });
+      }
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/account/[id]");
+
+    return { success: true };
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }

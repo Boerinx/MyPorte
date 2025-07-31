@@ -6,10 +6,13 @@ export function formatRupiah(value: Decimal | number | string) {
       ? value.toNumber()
       : Number(value);
 
-  return new Intl.NumberFormat("id-ID", {
+  const formatted = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);
+
+  // Remove the space after 'Rp'
+  return formatted.replace(/\s/, "");
 }

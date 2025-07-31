@@ -17,15 +17,11 @@ import useFetch from "@/hooks/use-fetch";
 import { updateDefaultAccount } from "@/actions/accounts";
 import { toast } from "sonner";
 
-type Props = {
-  account: Account;
-};
-
 type UpdateDefaultAccountResponse = {
   success: boolean;
 };
 
-const AccountCard = ({ account }: Props) => {
+const AccountCard = ({ account }: { account: Account }) => {
   const { name, type, balance, id, isDefault } = account;
 
   const {

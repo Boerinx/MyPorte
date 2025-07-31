@@ -1,5 +1,6 @@
 "use server";
 
+import { getCurrentUser } from "@/lib/get-current-user";
 import db from "@/lib/prisma";
 import serializeTransaction from "@/lib/serialize-transaction";
 import { auth } from "@clerk/nextjs/server";
@@ -15,16 +16,7 @@ type CreateAccountInput = {
 
 export async function createAccount(data: CreateAccountInput) {
   try {
-    const { userId } = await auth();
-    if (!userId) throw new Error("Unauthorized");
-
-    const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
+    const user = await getCurrentUser();
 
     // Convert balance to float before saving
     const balanceFloat = parseFloat(data.balance as string);
