@@ -7,12 +7,13 @@ import { BarLoader } from "react-spinners";
 import AccountChart from "../_components/account-chart";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-const AccountsPage = async ({ params }: PageProps) => {
+const AccountsPage = async (props: PageProps) => {
+  const params = await props.params;
   const accountData = await getAccountWithTransactions(params.id);
 
   if (!accountData) {
