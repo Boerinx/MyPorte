@@ -6,12 +6,13 @@ import TransactionTable from "../_components/transaction-table";
 import { BarLoader } from "react-spinners";
 import AccountChart from "../_components/account-chart";
 
-type Props = {
-  params: { id: string };
+type PageProps = {
+  params: {
+    id: string;
+  };
 };
 
-const AccountsPage = async (props: Props) => {
-  const params = await props.params;
+const AccountsPage = async ({ params }: PageProps) => {
   const accountData = await getAccountWithTransactions(params.id);
 
   if (!accountData) {
